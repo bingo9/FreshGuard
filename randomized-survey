@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+    <script>
+      const forms = [
+        "https://docs.google.com/forms/d/e/1FAIpQLSer_JsDMpSKNzVX5lT2J_Pp8FmlAuc-ajNN7Zc-wqkMulMztg/viewform?usp=dialog?src=random4",
+        "https://docs.google.com/forms/d/e/1FAIpQLScP-aqzfmLo7X-xkuljH7D6Uey4Wu5odS0_fDz4oDsQBH3sdw/viewform?usp=dialog?src=random3",
+        "https://docs.google.com/forms/d/e/1FAIpQLScqkogTDIOMuNXw2b7VdTCZIWoEjovHuUhzSwUue3Jut-2AEg/viewform?usp=dialog?src=random2",
+        "https://docs.google.com/forms/d/e/1FAIpQLScSsfe4vhpo0UDkYkXQRhlLnIOYsQrqcLHDIxNFs61WsQj8vQ/viewform?usp=dialog?src=random1"
+      ];
+
+      const randomIndex = Math.floor(Math.random() * forms.length);
+      window.location.href = forms[randomIndex];
+    </script>
+  </head>
+  <body>
+    <p>Redirecting you to the survey...</p>
+  </body>
+</html>
