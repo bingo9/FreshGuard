@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Redirecting...</title>
+  <script>
+    async function redirectWithHash() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+
+      // SHA-256 hash function
+      const enc = new TextEncoder().encode(id);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", enc);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+
+      // Google Form entry fields
+      const mainFormEntry = "entry.MAIN_HASHED_ID_FIELD";
+      const auxEntry = "entry.AUX_HASHED_ID_FIELD";
+      const drawEntry = "entry.UNHASHED_ID_FIELD";
+
+      const mainForm = `https://docs.google.com/forms/d/e/YOUR_NA_MAIN_FORM/viewform?${mainFormEntry}=${hashHex}`;
+      const auxForms = [
+        "https://docs.google.com/forms/d/e/AUX1/viewform",
+        "https://docs.google.com/forms/d/e/AUX2/viewform",
+        "https://docs.google.com/forms/d/e/AUX3/viewform",
+        "https://docs.google.com/forms/d/e/AUX4/viewform"
+      ].map(url => `${url}?${auxEntry}=${hashHex}`);
+      const entryForm = `https://docs.google.com/forms/d/e/YOUR_ENTRY_FORM/viewform?${drawEntry}=${id}`;
+
+      // Launch flow
+      window.location.href = mainForm;
+
+      setTimeout(() => {
+        window.location.href = auxForms[Math.floor(Math.random() * auxForms.length)];
+      }, 5000); // bonus survey 5s later
+
+      setTimeout(() => {
+        window.location.href = entryForm;
+      }, 10000); // entry form after 10s
+    }
+
+    redirectWithHash();
+  </script>
+</head>
+<body>
+  <h2>Redirecting to your survey...</h2>
+</body>
+</html>
