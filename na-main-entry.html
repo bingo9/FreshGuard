@@ -2,41 +2,70 @@
 <html>
 <head>
   <title>Redirecting...</title>
+  <meta charset="utf-8" />
   <script>
     async function redirectWithHash() {
       const params = new URLSearchParams(window.location.search);
       const id = params.get("id");
 
-      // SHA-256 hash function
+      if (!id) {
+        document.body.innerHTML = "<h2>Error: No ID provided in URL.</h2>";
+        return;
+      }
+
+      // Hash the ID
       const enc = new TextEncoder().encode(id);
       const hashBuffer = await crypto.subtle.digest("SHA-256", enc);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 
-      // Google Form entry fields
-      const mainFormEntry = "entry.318794376";
-      const auxEntry = "entry.AUX_HASHED_ID_FIELD";
-      const drawEntry = "entry.UNHASHED_ID_FIELD";
+      // Google Form entry fields and URLs
+      const mainFormEntryField = "entry.318794376"; // Replace with your main form field
+      const drawEntryField = "entry.UNHASHED_ID_FIELD"; // Replace with your entry form field
 
-      const mainForm = `https://docs.google.com/forms/d/e/YOUR_NA_MAIN_FORM/viewform?${mainFormEntry}=${hashHex}`;
+      const mainFormURL = "https://docs.google.com/forms/d/e/YOUR_NA_MAIN_FORM/viewform";
+      const entryFormURL = "https://docs.google.com/forms/d/e/YOUR_ENTRY_FORM/viewform";
+
+      // Auxiliary forms with their individual entry fields
       const auxForms = [
-        "https://docs.google.com/forms/d/e/AUX1/viewform",
-        "https://docs.google.com/forms/d/e/AUX2/viewform",
-        "https://docs.google.com/forms/d/e/AUX3/viewform",
-        "https://docs.google.com/forms/d/e/AUX4/viewform"
-      ].map(url => `${url}?${auxEntry}=${hashHex}`);
-      const entryForm = `https://docs.google.com/forms/d/e/YOUR_ENTRY_FORM/viewform?${drawEntry}=${id}`;
+        {
+          url: "https://docs.google.com/forms/d/e/AUX1/viewform",
+          field: "entry.111111111"
+        },
+        {
+          url: "https://docs.google.com/forms/d/e/AUX2/viewform",
+          field: "entry.222222222"
+        },
+        {
+          url: "https://docs.google.com/forms/d/e/AUX3/viewform",
+          field: "entry.333333333"
+        },
+        {
+          url: "https://docs.google.com/forms/d/e/AUX4/viewform",
+          field: "entry.444444444"
+        }
+      ];
 
-      // Launch flow
+      // Build main survey URL
+      const mainForm = `${mainFormURL}?${mainFormEntryField}=${hashHex}`;
+
+      // Pick a random auxiliary form
+      const chosenAux = auxForms[Math.floor(Math.random() * auxForms.length)];
+      const auxForm = `${chosenAux.url}?${chosenAux.field}=${hashHex}`;
+
+      // Build entry form URL
+      const entryForm = `${entryFormURL}?${drawEntryField}=${id}`;
+
+      // Redirect sequence
       window.location.href = mainForm;
 
       setTimeout(() => {
-        window.location.href = auxForms[Math.floor(Math.random() * auxForms.length)];
-      }, 5000); // bonus survey 5s later
+        window.location.href = auxForm;
+      }, 5000);
 
       setTimeout(() => {
         window.location.href = entryForm;
-      }, 10000); // entry form after 10s
+      }, 10000);
     }
 
     redirectWithHash();
