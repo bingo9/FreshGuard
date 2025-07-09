@@ -6,7 +6,13 @@
   <script>
     async function redirectWithHash() {
       const params = new URLSearchParams(window.location.search);
-      const id = params.get("id");
+      const id = generateID();
+      
+      function generateID() {
+        const prefix = location.pathname.includes("uk") ? "uk" : "na";
+        const rand = Math.floor(100000 + Math.random() * 900000); // 6-digit number
+        return `${prefix}${rand}`;
+      }
 
       if (!id) {
         document.body.innerHTML = "<h2>Error: No ID provided in URL.</h2>";
