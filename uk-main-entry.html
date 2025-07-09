@@ -5,18 +5,12 @@
   <meta charset="utf-8" />
   <script>
     async function redirectWithHash() {
-      const params = new URLSearchParams(window.location.search);
       const id = generateID();
-      
-      function generateID() {
-        const prefix = location.pathname.includes("uk") ? "uk" : "na";
-        const rand = Math.floor(100000 + Math.random() * 900000); // 6-digit number
-        return `${prefix}${rand}`;
-      }
 
-      if (!id) {
-        document.body.innerHTML = "<h2>Error: No ID provided in URL.</h2>";
-        return;
+      function generateID() {
+        const prefix = "uk";
+        const rand = Math.floor(100000 + Math.random() * 900000);
+        return `${prefix}${rand}`;
       }
 
       // Hash the ID
@@ -25,53 +19,28 @@
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 
-      // Google Form entry fields and URLs
-      const mainFormEntryField = "entry.318794376"; // Replace with your main form field
-      const drawEntryField = "entry.2146362662"; // Replace with your entry form field
-
+      // Replace these with your actual IDs
       const mainFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSfjtLVPjDh8dxrGcRnBU_kwHCwkOOd-Jebv5NuNI3ImRHUIuA/viewform";
+      const mainFormField = "entry.318794376";
       const entryFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSfjtLVPjDh8dxrGcRnBU_kwHCwkOOd-Jebv5NuNI3ImRHUIuA/viewform";
+      const entryField = "entry.2146362662";
 
-      // Auxiliary forms with their individual entry fields
       const auxForms = [
-        {
-          url: "https://docs.google.com/forms/d/e/1FAIpQLSdN78ND22h9QqIq4nLdnbxmOH4HF1qmM-eqc6EEl9dlquuR3g/viewform",
-          field: "entry.856837695"
-        },
-        {
-          url: "https://docs.google.com/forms/d/e/1FAIpQLSfX_ZwvCCfrgAxje6mteS_ey_zTM2L3Kod9FfMOeRnCyDQpTQ/viewform",
-          field: "entry.681855687"
-        },
-        {
-          url: "https://docs.google.com/forms/d/e/1FAIpQLSeaRF2HPWKpfoj2s39UftViPzGbBbCRIQXGCPww8brVBF6f9A/viewform",
-          field: "entry.369870927"
-        },
-        {
-          url: "https://docs.google.com/forms/d/e/1FAIpQLSeo1aJds4Vwt-ZqHyLeQmf5pLQUd2feziCMLTpmDc4PYnQ_rg/viewform",
-          field: "entry.557297139"
-        }
+        { url: "https://docs.google.com/forms/d/e/1FAIpQLSdN78ND22h9QqIq4nLdnbxmOH4HF1qmM-eqc6EEl9dlquuR3g/viewform", field: "entry.856837695" },
+        { url: "https://docs.google.com/forms/d/e/1FAIpQLSfX_ZwvCCfrgAxje6mteS_ey_zTM2L3Kod9FfMOeRnCyDQpTQ/viewform", field: "entry.681855687" },
+        { url: "https://docs.google.com/forms/d/e/1FAIpQLSeaRF2HPWKpfoj2s39UftViPzGbBbCRIQXGCPww8brVBF6f9A/viewform", field: "entry.369870927" },
+        { url: "https://docs.google.com/forms/d/e/1FAIpQLSeo1aJds4Vwt-ZqHyLeQmf5pLQUd2feziCMLTpmDc4PYnQ_rg/viewform", field: "entry.557297139" }
       ];
 
-      // Build main survey URL
-      const mainForm = `${mainFormURL}?${mainFormEntryField}=${hashHex}`;
+      const mainLink = `${mainFormURL}?${mainFormField}=${hashHex}`;
+      const aux = auxForms[Math.floor(Math.random() * auxForms.length)];
+      const auxLink = `${aux.url}?${aux.field}=${hashHex}`;
+      const entryLink = `${entryFormURL}?${entryField}=${id}`;
 
-      // Pick a random auxiliary form
-      const chosenAux = auxForms[Math.floor(Math.random() * auxForms.length)];
-      const auxForm = `${chosenAux.url}?${chosenAux.field}=${hashHex}`;
-
-      // Build entry form URL
-      const entryForm = `${entryFormURL}?${drawEntryField}=${id}`;
-
-      // Redirect sequence
-      window.location.href = mainForm;
-
-      setTimeout(() => {
-        window.location.href = auxForm;
-      }, 5000);
-
-      setTimeout(() => {
-        window.location.href = entryForm;
-      }, 10000);
+      // Redirect in sequence
+      window.location.href = mainLink;
+      setTimeout(() => window.location.href = auxLink, 5000);
+      setTimeout(() => window.location.href = entryLink, 10000);
     }
 
     redirectWithHash();
