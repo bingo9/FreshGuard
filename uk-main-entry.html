@@ -5,13 +5,10 @@
   <meta charset="utf-8" />
   <script>
     async function redirectWithHash() {
-      const id = generateID();
-
-      function generateID() {
-        const prefix = "uk";
-        const rand = Math.floor(100000 + Math.random() * 900000);
-        return `${prefix}${rand}`;
-      }
+      // Load IDs from JSON file on GitHub Pages
+      const response = await fetch("uk-ids.json");
+      const ids = await response.json();
+      const id = ids[Math.floor(Math.random() * ids.length)];
 
       // Hash the ID
       const enc = new TextEncoder().encode(id);
@@ -19,9 +16,10 @@
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 
-      // Replace these with your actual IDs
+      // Google Forms
       const mainFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSewLBowjdXjqZ0RpsjdwdITgC2c8jsYYgZVnE-pcMgfLsiPUA/viewform";
       const mainFormField = "entry.318794376";
+
       const entryFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSfjtLVPjDh8dxrGcRnBU_kwHCwkOOd-Jebv5NuNI3ImRHUIuA/viewform";
       const entryField = "entry.2146362662";
 
@@ -37,7 +35,7 @@
       const auxLink = `${aux.url}?${aux.field}=${hashHex}`;
       const entryLink = `${entryFormURL}?${entryField}=${id}`;
 
-      // Redirect in sequence
+      // Redirect sequence
       window.location.href = mainLink;
       setTimeout(() => window.location.href = auxLink, 5000);
       setTimeout(() => window.location.href = entryLink, 10000);
