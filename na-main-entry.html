@@ -5,39 +5,48 @@
   <meta charset="utf-8" />
   <script>
     async function redirectWithHash() {
-      const id = generateID();
+      try {
+        // 🔹 Load ID from na-ids.json (hosted on your GitHub Pages)
+        const response = await fetch("na-ids.json");
+        const ids = await response.json();
 
-      function generateID() {
-        const prefix = "na";
-        const rand = Math.floor(100000 + Math.random() * 900000);
-        return `${prefix}${rand}`;
+        // 🔹 Pick random ID
+        const id = ids[Math.floor(Math.random() * ids.length)];
+
+        // 🔹 Hash the ID using SHA-256
+        const enc = new TextEncoder().encode(id);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", enc);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+
+        // 🔹 Google Form settings
+        const mainFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdD_gxc5ur1bewa5n5dpiKO_EgprnWF22W7i45Uq-Qz_h0t-w/viewform";
+        const mainFormField = "entry.426302739";
+
+        const entryFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSfjtLVPjDh8dxrGcRnBU_kwHCwkOOd-Jebv5NuNI3ImRHUIuA/viewform";
+        const entryField = "entry.2146362662";
+
+        const auxForms = [
+          { url: "https://docs.google.com/forms/d/e/1FAIpQLSf0dvUWZKw8RL6lt4TvqCf48CYgXPDM9PfV-7IM1WYPA9ppKQ/viewform", field: "entry.264515739" },
+          { url: "https://docs.google.com/forms/d/e/1FAIpQLSfmHNn31XjTppHwDyr6ZdpOEfK0oDBs4Og4b7-T75sFB65guA/viewform", field: "entry.1996828059" },
+          { url: "https://docs.google.com/forms/d/e/1FAIpQLSeZmXgFOeC63o-iS50qIDlomp728XZVwOkMLG_0RvPk1OPWzA/viewform", field: "entry.561658891" },
+          { url: "https://docs.google.com/forms/d/e/1FAIpQLScaj3sZAYdg5ToggZAQOTHXpGvr9cwutCIdMUvNNBd_098_EQ/viewform", field: "entry.1736154437" }
+        ];
+
+        // 🔹 Build links
+        const mainLink = `${mainFormURL}?${mainFormField}=${hashHex}`;
+        const aux = auxForms[Math.floor(Math.random() * auxForms.length)];
+        const auxLink = `${aux.url}?${aux.field}=${hashHex}`;
+        const entryLink = `${entryFormURL}?${entryField}=${id}`;
+
+        // 🔹 Redirect user
+        window.location.href = mainLink;
+        setTimeout(() => window.location.href = auxLink, 5000);
+        setTimeout(() => window.location.href = entryLink, 10000);
+
+      } catch (error) {
+        document.body.innerHTML = `<h2>Error: ${error.message}</h2>`;
       }
-
-      const enc = new TextEncoder().encode(id);
-      const hashBuffer = await crypto.subtle.digest("SHA-256", enc);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-
-      const mainFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdD_gxc5ur1bewa5n5dpiKO_EgprnWF22W7i45Uq-Qz_h0t-w/viewform";
-      const mainFormField = "entry.426302739";
-      const entryFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSfjtLVPjDh8dxrGcRnBU_kwHCwkOOd-Jebv5NuNI3ImRHUIuA/viewform";
-      const entryField = "entry.2146362662";
-
-      const auxForms = [
-        { url: "https://docs.google.com/forms/d/e/1FAIpQLSf0dvUWZKw8RL6lt4TvqCf48CYgXPDM9PfV-7IM1WYPA9ppKQ/viewform", field: "entry.264515739" },
-        { url: "https://docs.google.com/forms/d/e/1FAIpQLSfmHNn31XjTppHwDyr6ZdpOEfK0oDBs4Og4b7-T75sFB65guA/viewform", field: "entry.1996828059" },
-        { url: "https://docs.google.com/forms/d/e/1FAIpQLSeZmXgFOeC63o-iS50qIDlomp728XZVwOkMLG_0RvPk1OPWzA/viewform", field: "entry.561658891" },
-        { url: "https://docs.google.com/forms/d/e/1FAIpQLScaj3sZAYdg5ToggZAQOTHXpGvr9cwutCIdMUvNNBd_098_EQ/viewform", field: "entry.1736154437" }
-      ];
-
-      const mainLink = `${mainFormURL}?${mainFormField}=${hashHex}`;
-      const aux = auxForms[Math.floor(Math.random() * auxForms.length)];
-      const auxLink = `${aux.url}?${aux.field}=${hashHex}`;
-      const entryLink = `${entryFormURL}?${entryField}=${id}`;
-
-      window.location.href = mainLink;
-      setTimeout(() => window.location.href = auxLink, 5000);
-      setTimeout(() => window.location.href = entryLink, 10000);
     }
 
     redirectWithHash();
